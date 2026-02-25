@@ -1,5 +1,13 @@
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from pathlib import Path
+
 app = FastAPI()
-@app.get("/")
-def read_root():
-    return {"message": "Добро пожаловать в моё приложение FastAPI!"}
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root():
+    html_path = Path("index.html")
+    if html_path.exists():
+        return html_path.read_text(encoding="utf-8")
+    else:
+        return HTMLResponse(content="<h1>Файл index.html не найден</h1>", status_code=404)
